@@ -1,10 +1,31 @@
+// pages/posts/[id].js
+// ---------------------------------------------------------------
+
 import Layout from '../../components/layout';
-import { getAllIds, getData } from '../../lib/posts';  // ← FIXED
+import { getAllIds, getData } from '../../lib/posts';
 import Head from 'next/head';
 import Date from '../../components/date';
 import utilStyles from '../../styles/utils.module.css';
 
+// ------------------------------------------------------------------
+// Default export: Render post or 404 if invalid
+// ------------------------------------------------------------------
 export default function Post({ postData }) {
+  // If postData is null or missing required fields → show 404-like UI
+  if (!postData || !postData.id) {
+    return (
+      <Layout>
+        <Head>
+          <title>Post Not Found</title>
+        </Head>
+        <article>
+          <h1 className={utilStyles.headingXl}>Post Not Found</h1>
+          <p>Sorry, this post does not exist or is unavailable.</p>
+        </article>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <Head>
@@ -21,16 +42,30 @@ export default function Post({ postData }) {
   );
 }
 
+// ------------------------------------------------------------------
+// getStaticPaths: Generate only valid IDs
+// ------------------------------------------------------------------
 export async function getStaticPaths() {
-  const paths = await getAllIds(); // ← FIXED
+  const paths = await getAllIds();
   return {
     paths,
-    fallback: false,
+    fallback: false, // 404 for unknown paths
   };
 }
 
+// ------------------------------------------------------------------
+// getStaticProps: Return notFound: true if post missing
+// ------------------------------------------------------------------
 export async function getStaticProps({ params }) {
   const postData = await getData(params.id);
+
+  // If no post found → return 404
+  if (!postData) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       postData,
