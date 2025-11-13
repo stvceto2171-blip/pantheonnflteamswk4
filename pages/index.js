@@ -1,7 +1,8 @@
+// pages/index.js
 import Head from 'next/head';
 import Layout, { siteTitle } from '../components/layout';
 import utilStyles from '../styles/utils.module.css';
-import { getSortedList } from '../lib/posts';  // ← FIXED
+import { getSortedPostsData } from '../lib/posts';  // ← FIXED
 import Link from 'next/link';
 import Date from '../components/date';
 
@@ -37,7 +38,7 @@ export default function Home({ allPostsData }) {
 }
 
 export async function getStaticProps() {
-  const allPostsData = await getSortedList(); // ← FIXED
+  const allPostsData = await getSortedPostsData();  // ← FIXED
   return {
     props: {
       allPostsData,

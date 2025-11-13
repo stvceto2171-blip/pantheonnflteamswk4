@@ -1,8 +1,7 @@
 // pages/posts/[id].js
 // ---------------------------------------------------------------
-
 import Layout from '../../components/layout';
-import { getAllIds, getData } from '../../lib/posts';
+import { getAllPostIds, getPostData } from '../../lib/posts';  // ← FIXED
 import Head from 'next/head';
 import Date from '../../components/date';
 import utilStyles from '../../styles/utils.module.css';
@@ -25,7 +24,6 @@ export default function Post({ postData }) {
       </Layout>
     );
   }
-
   return (
     <Layout>
       <Head>
@@ -46,7 +44,7 @@ export default function Post({ postData }) {
 // getStaticPaths: Generate only valid IDs
 // ------------------------------------------------------------------
 export async function getStaticPaths() {
-  const paths = await getAllIds();
+  const paths = await getAllPostIds();  // ← FIXED
   return {
     paths,
     fallback: false, // 404 for unknown paths
@@ -57,15 +55,13 @@ export async function getStaticPaths() {
 // getStaticProps: Return notFound: true if post missing
 // ------------------------------------------------------------------
 export async function getStaticProps({ params }) {
-  const postData = await getData(params.id);
-
+  const postData = await getPostData(params.id);  // ← FIXED
   // If no post found → return 404
   if (!postData) {
     return {
       notFound: true,
     };
   }
-
   return {
     props: {
       postData,
